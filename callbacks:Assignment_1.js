@@ -1,5 +1,6 @@
+//Program to find the number users with given name and their ids which uses
+//two callback functions inside a funtion
 let readline=require('readline');
-
 let rl=readline.createInterface({
     input:process.stdin,
     output:process.stdout
