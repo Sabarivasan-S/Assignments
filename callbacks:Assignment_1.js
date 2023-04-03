@@ -34,7 +34,7 @@ function main(nm,callback1,callback2){ //main function which has two callbacks
     if(similar==0){
         return console.log(`No person with ${nm} found`);
     }
-    return 'Occurs '+similar+' times';
+    return console.log('Occurs '+similar+' times');
 }
 
 rl.question('Enter the name  ',(data)=>{    //receives name for console
