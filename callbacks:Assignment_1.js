@@ -1,6 +1,5 @@
-//Program to find the number users with given name and their ids which uses
-//two callback functions inside a funtion
 let readline=require('readline');
+
 let rl=readline.createInterface({
     input:process.stdin,
     output:process.stdout
@@ -13,6 +12,7 @@ let names=[ //sample data entries
 ];
 
 function finder(n){ //function which adds the persons with given name and push them to
+    return setTimeout(()=>{
     let a=[];       //seperate array
     for(let r=0;r<names.length;r++){
         if(n==names[r].name){
@@ -20,14 +20,14 @@ function finder(n){ //function which adds the persons with given name and push t
         }
     }
     if(a.length==0) return 0;
-    return a;
+    return a;},10000);
 }
 function len(a){    //function to print the ids and no of persons with the given name 
-    if(a==0) return 0;
+    return setTimeout(()=>{if(a==0) return 0;
     for(let f=0;f<a.length;f++){
         console.log('id : '+a[f].id);
     }
-    return a.length;
+    return a.length;},20000);
 }
 function main(nm,callback1,callback2){ //main function which has two callbacks
     let similar=callback2(callback1(nm));
@@ -41,5 +41,8 @@ rl.question('Enter the name  ',(data)=>{    //receives name for console
     rl.close();
     main(data,finder,len);//call of main function
 });
+
+
+
 
 
