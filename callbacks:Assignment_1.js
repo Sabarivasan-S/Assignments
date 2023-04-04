@@ -12,7 +12,6 @@ let names=[ //sample data entries
 ];
 
 function finder(n){ //function which adds the persons with given name and push them to
-    return setTimeout(()=>{
     let a=[];       //seperate array
     for(let r=0;r<names.length;r++){
         if(n==names[r].name){
@@ -20,14 +19,14 @@ function finder(n){ //function which adds the persons with given name and push t
         }
     }
     if(a.length==0) return 0;
-    return a;},10000);
+    return a;
 }
 function len(a){    //function to print the ids and no of persons with the given name 
     return setTimeout(()=>{if(a==0) return 0;
     for(let f=0;f<a.length;f++){
         console.log('id : '+a[f].id);
     }
-    return a.length;},20000);
+    return a.length;},2000);
 }
 function main(nm,callback1,callback2){ //main function which has two callbacks
     let similar=callback2(callback1(nm));
