@@ -108,6 +108,10 @@ function listen() {
         }
     });
 }
+rl.on('error',()=>{
+    console.log('An error Occured');
+    return;
+})
 
 // Start the program by calling the ask() function
 ask();
