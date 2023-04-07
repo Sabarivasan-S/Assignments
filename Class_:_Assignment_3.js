@@ -1,13 +1,12 @@
 // Import the required modules and creating interface and object for them
-let readline = require('readline');
-let rl = readline.createInterface({
+const readline = require('readline-promise').default;
+const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
-var events = require('events');
-var eventEmitter = new events.EventEmitter();
+const events = require('events');
+const eventEmitter = new events.EventEmitter();
 eventEmitter.on('close', listen);
-
 // Define a Student class
 class Student {
     constructor(id) {
@@ -31,12 +30,10 @@ class Student {
         return new Student(id);
     }
 }
-
 // Create an empty object to store the students
-let students = {};
-
+const students = {};
 // Define a function to perform the chosen action
-function perform(option, id, subject, mark) {
+async function perform(option, id, subject, mark) {
     switch(option) {
         case '1':
             let student = Student.Create(id);
@@ -75,43 +72,33 @@ function perform(option, id, subject, mark) {
     
     // Emit the 'close' event
     eventEmitter.emit('close');
-    return;
 }
-
 // Define a function to ask the user for input
-function ask() {
+async function ask() {
     console.log('Choose an option:\n1. Create [must if no student created]\n2. Set mark\n3. Get marks\n4. Fetch details');
-    rl.question('', (option) => {
-        rl.question('Student id:', (id) => {
-            // If the chosen option is '2', ask for the subject and mark
-            if (option == '2') {
-                rl.question('Subject:', (subject) => {
-                    rl.question('Mark:', (mark) => {
-                        perform(option, id, subject, mark);
-                    });
-                });
-            } else {
-                perform(option, id, null, null);
-            }
-        });
-    });
+    const option = await rl.questionAsync('');
+    const id = await rl.questionAsync('Student id:');
+    // If the chosen option is '2', ask for the subject and mark
+    if (option == '2') {
+        const subject = await rl.questionAsync('Subject:');
+        const mark = await rl.questionAsync('Mark:');
+        await perform(option, id, subject, mark);
+    } else {
+        await perform(option, id, null, null);
+    }
 }
-
 // Define a function to ask the user if they want to continue
-function listen() {
-    rl.question('Do you want to continue? (y/n) ', (answer) => {
-        if (answer.toLowerCase() === 'y') {
-            ask();
-        } else {
-            rl.close();
-            return;
-        }
-    });
+async function listen() {
+    const answer = await rl.questionAsync('Do you want to continue? (y/n) ');
+    if (answer.toLowerCase() === 'y') {
+        await ask();
+    } else {
+        rl.close();
+    }
 }
-rl.on('error',()=>{
-    console.log('An error Occured');
-    return;
-})
-
+// Handle errors
+rl.on('error', (err) => {
+    console.log('An error occurred:', err);
+});
 // Start the program by calling the ask() function
 ask();
