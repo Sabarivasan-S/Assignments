@@ -8,7 +8,7 @@ const app = express();
 // Middleware to parse JSON data in request bodies
 app.use(express.json());
 
-// Dummy data for students
+// data for students
 const stud = [  { id: 1, name: 'name1' },  { id: 2, name: 'name2' },  { id: 3, name: 'name3' }];
 
 // Route to handle the home page
@@ -58,15 +58,15 @@ app.put('/api/students/:id', (req, res) => {
   }
 
   // Find the student by ID and update its name
-  let s = check(req.params.id);
-  if (!s) {
+  let condition= check(req.params.id);
+  if (!condition) {
     res.status(404).send('Id not found');
     return;
   }
-  s = { ...s, name: req.body.name };
+  name= { name: req.body.name };
 
   // Send the updated student object as response
-  res.send(s);
+  res.send(name);
 });
 
 // Route to delete a student by ID
@@ -100,5 +100,5 @@ function check(stu) {
 // Starting the server on port 3000
 const port = 3000;
 app.listen(port, () => {
-  console.log(`BOOM server active on port ${port}`);
+  console.log(`Server active on port ${port}`);
 });
