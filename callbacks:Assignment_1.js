@@ -22,11 +22,11 @@ function finder(n){ //function which adds the persons with given name and push t
     return a;
 }
 function len(a){    //function to print the ids and no of persons with the given name 
-    return setTimeout(()=>{if(a==0) return 0;
+    if(a==0) return 0;
     for(let f=0;f<a.length;f++){
         console.log('id : '+a[f].id);
     }
-    return a.length;},2000);
+    return a.length;
 }
 function main(nm,callback1,callback2){ //main function which has two callbacks
     let similar=callback2(callback1(nm));
