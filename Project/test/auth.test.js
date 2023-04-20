@@ -85,7 +85,7 @@ describe('/login',()=>{
         chai.request('http://localhost:6000')
         .post('/login')
         .send({
-            userid:1,
+            userid:10000,
             password:"password1"
         })
         .end((err,res)=>{
