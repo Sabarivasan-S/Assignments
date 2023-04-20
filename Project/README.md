@@ -13,4 +13,3 @@ Script to run:
  1.to run test: npm run test
  2.to run test with coverage: npm run coverage
  3.to start server: npm run start (it will start both the servers)
- 
