@@ -6,7 +6,7 @@ require('dotenv').config();
 chai.use(chaiHttp);
 let {authenticateToken,generateAccessToken,addrefreshToken} = require('../authenticationserver.js');
 let expect=chai.expect;
-let userid={userid:15}
+let userid={userid:1}
 let refreshtoken=jwt.sign(userid,process.env.REFRESH_TOKEN_SECRET)
 addrefreshToken(refreshtoken)
 const token = generateAccessToken(userid);
@@ -58,8 +58,8 @@ describe('/login',()=>{
         chai.request('http://localhost:6000')
         .post('/login')
         .send({
-            userid:15,
-            password:"newpassword"
+            userid:1,
+            password:"password1"
         })
         .end((err,res)=>{
             expect(res).to.have.status(200);
@@ -72,7 +72,7 @@ describe('/login',()=>{
         chai.request('http://localhost:6000')
         .post('/login')
         .send({
-            "userid":15,
+            "userid":1,
             "password":"invalidpassword"
         })
         .end((err,res)=>{
@@ -205,7 +205,7 @@ describe('PUT /update', () => {
     .set('authorization', `Bearer ${token}`)
     .send({
       username: 'newusername',
-      password: 'newpassword',
+      password: 'password1',
       email: 'newemail@example.com',
       phone: '1234567890',
       address: 'newaddress'
