@@ -6,6 +6,7 @@ let {authenticateToken}=require('./authenticationserver.js')
 const app=express();
 require('dotenv').config();
 app.use(express.json());
+app.use(authenticateToken);
 const sequelize=new Sequelize('ecommerce','root','admin',{
     host:'127.0.0.1',
     dialect:'postgres'
@@ -37,13 +38,13 @@ const orders=sequelize.define('orders',{
 });
 
 //Route to receive all the orders of user
-app.get('/orders',authenticateToken,async (req,res)=>{
+app.get('/orders',async (req,res)=>{
     let orderdetails=await orders.findAll({where:{userid:req.userid}});
     if(orderdetails[0]==null) return res.status(200).send('No order exist for user');
     res.send(orderdetails);
 });
 //Route to get specific order
-app.get('/order/:orderid',authenticateToken,async (req,res)=>{
+app.get('/order/:orderid',async (req,res)=>{
     console.log('entered-----');
     let orderid=req.params.orderid;
     let orderdetail
@@ -56,7 +57,7 @@ app.get('/order/:orderid',authenticateToken,async (req,res)=>{
     
 });
 //Route to create order
-app.post('/order',authenticateToken,async (req,res)=>{
+app.post('/order',async (req,res)=>{
     try{
         let schema=joi.object({
             product:joi.string().required(),
@@ -76,7 +77,7 @@ app.post('/order',authenticateToken,async (req,res)=>{
     }
 });
 //Route to update order datails
-app.put('/order/:orderid',authenticateToken,async (req,res)=>{
+app.put('/order/:orderid',async (req,res)=>{
     try{
         let orderid=req.params.orderid;
         let userid=req.userid;
@@ -97,7 +98,7 @@ app.put('/order/:orderid',authenticateToken,async (req,res)=>{
     }
 });
 //Route to delete order
-app.delete('/order/:orderid',authenticateToken,async (req,res)=>{
+app.delete('/order/:orderid',async (req,res)=>{
 
         let orderid=req.params.orderid;   
         await orders.destroy({where:{userid:req.userid,orderid:orderid}})
