@@ -5,8 +5,8 @@ let chaiHttp = require('chai-http');
 chai.use(chaiHttp);
 require('dotenv').config();
 let expect=chai.expect;
-var orderid;
-let userid={userid:15}
+var orderId;
+let userid={userid:1}
 let token=jwt.sign(userid,process.env.ACCESS_TOKEN_SECRET);
 let faketoken=jwt.sign({userid:7890},process.env.ACCESS_TOKEN_SECRET);
 describe('GET /orders', () => {
@@ -42,7 +42,7 @@ describe('GET /orders', () => {
     });
     it('get specific order with valid details', async () => {
         const res= await chai.request('http://localhost:7000')
-          .get('/order/8')
+          .get('/order/1')
           .set('authorization', `Bearer ${token}`);
         expect(res).to.have.status(200);
         console.log(res);
@@ -99,8 +99,7 @@ describe('PUT /order/:orderid', () => {
       });
 
     expect(res).to.have.status(400);
-  });
-
+  }); 
   it('should return 400 error for unauthorized request', async () => {
     const res = await chai.request('http://localhost:7000')
       .put(`/order/${orderId}`)
@@ -116,7 +115,7 @@ describe('PUT /order/:orderid', () => {
 describe('delete order',()=>{
     it('delete valid order',(done)=>{
         chai.request('http://localhost:7000')
-        .delete('/order/14')
+        .delete(`/order/${orderId}`)
         .set('authorization', `Bearer ${token}`)
         .end((err,res)=>{
             expect(res).to.have.status(200);
