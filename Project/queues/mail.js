@@ -71,6 +71,11 @@ primaryQueue.process(async(job,done)=>{
         done();
     }
 })
+secondaryQueue.add({},{
+    repeat:{
+        cron:'*/30 * * * *'
+    }
+})
 secondaryQueue.process(async(job,done)=>{
     let pendings=await users.findAll({where:{valid:'pending'}})
     const pendingids = pendings.map((user) => user.userid);
@@ -80,10 +85,6 @@ secondaryQueue.process(async(job,done)=>{
     console.log('--------------------------------------');
     done();
 });
-secondaryQueue.add({},{
-    repeat:{
-        cron:'*/30 * * * *'
-    }
-})
+
 
 module.exports={primaryQueue};
