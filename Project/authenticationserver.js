@@ -1,6 +1,6 @@
 //Importing the required modules
 const express=require('express');
-const Sequelize=require('sequelize');
+const {users}=require('./models');
 const bcrypt=require('bcrypt');
 const joi=require('joi');
 const jwt=require('jsonwebtoken');
@@ -11,49 +11,8 @@ const app=express();
 //Calling json middleware
 app.use(express.json());
 //Connection with database ecommerce
-const sequelize=new Sequelize('ecommerce','root','admin',{
-    host:'127.0.0.1',
-    dialect:'postgres'
-});
 let refreshTokens=[];
 refreshTokens.push('sampletoken');
-//Defining Model for users table
-const users=sequelize.define('users',{
-    userid: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      username: {
-        type: Sequelize.STRING
-      },
-      password: {
-        type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      phone: {
-        type: Sequelize.STRING
-      },
-      address: {
-        type: Sequelize.STRING
-      },valid:{
-        allowNull:true,
-        type:Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: true,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: true,
-        type: Sequelize.DATE
-      }
-    }
-);
-
 //Route to generate accessToken with refresh token
 app.post('/token', (req, res) => {
     const refreshToken = req.body.token;
@@ -91,7 +50,7 @@ app.post('/register',async (req,res)=>{
     req.body.password=hashedpassword;
     const detail=await users.create(req.body);
     req.body.userid=detail.userid;
-    primaryQueue.add(req.body,{delay:milliseconds.minutes(2)});
+    primaryQueue.add(req.body,{delay:toMilliSeconds(2)});
     return res.json({userid:detail.userid});
 });
 //Route for login of user
@@ -145,6 +104,7 @@ function authenticateToken(req, res, next) {
 function addrefreshToken(token){
   refreshTokens.push(token);
 }
+const toMilliSeconds = (hrs,min,sec) => (hrs*60*60+min*60+sec)*1000;
 //Making server listen
 module.exports={authenticateToken,generateAccessToken,addrefreshToken};
 
