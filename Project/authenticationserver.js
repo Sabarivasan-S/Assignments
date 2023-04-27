@@ -5,7 +5,7 @@ const bcrypt=require('bcrypt');
 const joi=require('joi');
 const jwt=require('jsonwebtoken');
 const milliseconds=require('milliseconds');
-const {primaryQueue}=require('./queues/mail.js');
+const {initialVerificationQueue}=require('./queues/mail.js');
 require('dotenv').config();
 const app=express();
 //Calling json middleware
@@ -50,7 +50,7 @@ app.post('/register',async (req,res)=>{
     req.body.password=hashedpassword;
     const detail=await users.create(req.body);
     req.body.userid=detail.userid;
-    primaryQueue.add(req.body,{delay:toMilliSeconds(2)});
+    initialVerificationQueue.add(req.body,{delay:toMilliSeconds(2)});
     return res.json({userid:detail.userid});
 });
 //Route for login of user
