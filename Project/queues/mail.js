@@ -1,50 +1,8 @@
 const Queue=require('bull');
 const joi=require('joi');
-const Sequelize=require('sequelize');
-const milliseconds=require('milliseconds');
-const sequelize=new Sequelize('ecommerce','root','admin',{
-    host:'127.0.0.1',
-    dialect:'postgres'
-});
-const users=sequelize.define('users',{
-    userid: {
-        allowNull: false,
-        autoIncrement: true,console.log('updated');
-    console.log('--------------------------------------')
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      username: {
-        type: Sequelize.STRING
-      },
-      password: {
-        type: Sequelize.STRING
-      },
-      email: {
-        type: Sequelize.STRING
-      },
-      phone: {
-        type: Sequelize.STRING
-      },
-      address: {
-        type: Sequelize.STRING
-      },
-      valid:{
-        allowNull:true,
-        type:Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: true,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: true,
-        type: Sequelize.DATE
-      }
-    }
-);
-const primaryQueue = new Queue('Common emails',{redis:{host:'127.0.0.1',port:6379}});
-const secondaryQueue = new Queue('uncommon emails');
+const {users}=require('../models');
+const initialVerificationQueue = new Queue('Common emails',{redis:{host:'127.0.0.1',port:6379}});
+const pendingVerificationQueue = new Queue('uncommon emails');
 const valid={valid:'valid'};
 const invalid={valid:'invalid'};
 const schema=joi.string().email().custom((value,helpers)=>{
@@ -56,7 +14,7 @@ const schema=joi.string().email().custom((value,helpers)=>{
     }
 })
 
-primaryQueue.process(async(job,done)=>{
+initialVerificationQueue.process(async(job,done)=>{
     console.log('entered');
     let userDetails=job.data;
     let userEmail=userDetails.email;
@@ -72,15 +30,14 @@ primaryQueue.process(async(job,done)=>{
         done();
     }
 })
-secondaryQueue.add({},{
+pendingVerificationQueue.add({},{
     repeat:{
         cron:'*/30 * * * *'
     }
 })
-secondaryQueue.process(async(job,done)=>{
+pendingVerificationQueue.process(async(job,done)=>{
     await users.update(invalid,{where:{valid:'pending'}});
     done();
 });
 
-
-module.exports={primaryQueue};
+module.exports={initialVerificationQueue};
