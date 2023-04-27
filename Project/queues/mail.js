@@ -9,7 +9,8 @@ const sequelize=new Sequelize('ecommerce','root','admin',{
 const users=sequelize.define('users',{
     userid: {
         allowNull: false,
-        autoIncrement: true,
+        autoIncrement: true,console.log('updated');
+    console.log('--------------------------------------')
         primaryKey: true,
         type: Sequelize.INTEGER
       },
@@ -77,12 +78,7 @@ secondaryQueue.add({},{
     }
 })
 secondaryQueue.process(async(job,done)=>{
-    let pendings=await users.findAll({where:{valid:'pending'}})
-    const pendingids = pendings.map((user) => user.userid);
-    console.log(pendings);
-    await users.update(invalid,{where:{userid:pendingids}});
-    console.log('updated');
-    console.log('--------------------------------------');
+    await users.update(invalid,{where:{valid:'pending'}});
     done();
 });
 
