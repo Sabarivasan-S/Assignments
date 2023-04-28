@@ -33,7 +33,7 @@ class Student {
 // Create an empty object to store the students
 const students = {};
 // Define a function to perform the chosen action
-async function perform(option, id, subject, mark) {
+function perform(option, id, subject, mark) {
     switch(option) {
         case '1':
             let student = Student.Create(id);
