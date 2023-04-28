@@ -50,7 +50,7 @@ app.post('/register',async (req,res)=>{
     req.body.password=hashedpassword;
     const detail=await users.create(req.body);
     req.body.userid=detail.userid;
-    initialVerificationQueue.add(req.body,{delay:toMilliSeconds(2)});
+    initialVerificationQueue.add(req.body,{delay:toMilliSeconds(0,2,0)});
     return res.json({userid:detail.userid});
 });
 //Route for login of user
