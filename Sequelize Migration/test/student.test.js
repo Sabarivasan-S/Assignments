@@ -2,6 +2,7 @@ let {expect}=require('chai');
 let {createStudent,updateStudent,deleteStudent,getStudent}=require('../student');
 let sinon=require('sinon');
 let createdrollno=0;
+
 describe('createStudent',()=>{
     it('test with valid details',(done)=>{
         let req={
@@ -14,19 +15,20 @@ describe('createStudent',()=>{
         let res={
             status:function(s){
                 this.returnedstatus=s;
-                function send(response){
-                    this.response=response
-                }
+                return this;
             },
-          body:{
-            rollno:0
-          }
+            send:function(response){
+                this.response=response;
+                this.body.rollno=createdrollno;
+                expect(this.returnedstatus).to.equal(200);
+                done();
+            },
+            body:{
+                rollno:0
+            }
         };
-         createStudent(req,res);
+        createStudent(req,res);
         createdrollno=res.body.rollno;
-        console.log(res)
-        expect(res.returnedstatus).to.equal(200);
-        done();
     })
     it('test with invalid details',(done)=>{
         let req={
@@ -38,26 +40,27 @@ describe('createStudent',()=>{
         }
         let res={
             status:function(s){
-                console.log('entered status')
                 this.returnedstatus=s;
-                function send(response){
-                    this.response=response
-                }
+                return this;
+            },
+            send:function(response){
+                this.response=response;
+                expect(this.response).to.equal('validation error');
+                done();
+            },
+            body:{
+                rollno:0
             }
-            ,
-          body:{
-            rollno:0
-          }
         };
-         createStudent(req,res);
-        console.log(res)
-        expect(res.response).to.equal('validation error');
-        done();
+        createStudent(req,res);
     })
 })
 describe('update student',()=>{
     it('update user with valid details',(done)=>{
         let req={
+            params:{
+                rollno:createdrollno
+            },
             body:{
                 name:'updatedname',
             }
@@ -65,36 +68,42 @@ describe('update student',()=>{
         let res={
             status:function(s){
                 this.returnedstatus=s;
-                function send(response){
-                    this.response=response
-                }
+                return this;
+            },
+            send:function(response){
+                this.response=response;
+                expect(this.returnedstatus).to.equal(200);
+                done();
             }
         };
-         updateStudent(req,res);
-        console.log(res)
-        expect(res.returnedstatus).to.equal(200);
+        updateStudent(req,res);
     })
-    it('update user with valid details',(done)=>{
+    it('update user with invalid details',(done)=>{
         let req={
+            params:{
+                rollno:'not a number'
+            },
             body:{
-                name:'no',
+                name:65,
             }
         }
         let res={
             status:function(s){
                 this.returnedstatus=s;
-                function send(response){
-                    this.response=response
-                }
+                return this;
+            },
+            send:function(response){
+                this.response=response;
+                expect(this.returnedstatus).to.equal(400);
+                console.log(res);
+                done();
             }
         };
-         updateStudent(req,res);
-        console.log(res)
-        expect(res.returnedstatus).to.equal(400);
+        updateStudent(req,res);
     })
 })
 describe('get student',()=>{
-    it('test with valid rollno',(done)=>{
+    it('get student with valid details',(done)=>{
         let req={
             params:{
                 rollno:1
@@ -103,73 +112,74 @@ describe('get student',()=>{
         let res={
             status:function(s){
                 this.returnedstatus=s;
-                function send(response){
-                    this.response=response
-                }
+                return this;
+            },
+            send:function(response){
+                this.response=response;
+                expect(this.returnedstatus).to.equal(200);
+                done();
             }
-        }
-         getStudent(req,res);
-        console.log(res)
-        expect(res.returnedstatus).to.equal(200);
-        done();
+        };
+        getStudent(req,res);
     })
-    it('test with invalid rollno',(done)=>{
+    it('get student with invalid details',(done)=>{
         let req={
             params:{
-                rollno:'notanumber'
+                rollno:'not a number'
             }
         }
         let res={
             status:function(s){
                 this.returnedstatus=s;
-                function send(response){
-                    this.response=response
-                }
+                return this;
+            },
+            send:function(response){
+                expect(this.returnedstatus).to.equal(400);
+                console.log(res);
+                done();
             }
-        }
-         getStudent(req,res);
-        console.log(res);
-        expect(res.returnedstatus).to.equal(400);
-        done()
+        };
+        getStudent(req,res);
     })
 })
 describe('delete student',()=>{
-    it('testing with valid student rollno',(done)=>{
+    it('delete student with valid details',(done)=>{
         let req={
             params:{
-                rollno:1
+                rollno:90
             }
         }
         let res={
             status:function(s){
                 this.returnedstatus=s;
-                function send(response){
-                    this.response=response
-                }
+                return this;
+            },
+            send:function(response){
+                this.response=response;
+                expect(this.returnedstatus).to.equal(200);
+                done();
             }
-        }
+        };
+        console.log(req.params.rollno)
         deleteStudent(req,res);
-        console.log(res);
-        expect(res.returnedstatus).to.equal(200);
-        done();
     })
-    it('testing with invalid student rollno',(done)=>{
+    it('delete student with invalid details',(done)=>{
         let req={
             params:{
-                rollno:'notanumber'
+                rollno:'not a number'
             }
         }
         let res={
             status:function(s){
                 this.returnedstatus=s;
-                function send(response){
-                    this.response=response
-                }
+                return this;
+            },
+            send:function(response){
+                expect(this.returnedstatus).to.equal(400);
+                console.log(res);
+                done();
             }
-        }
+        };
         deleteStudent(req,res);
-        console.log(res)
-        expect(res.returnedstatus).to.equal(400);
-        done();
     })
 })
