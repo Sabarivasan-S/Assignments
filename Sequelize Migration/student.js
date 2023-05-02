@@ -2,13 +2,10 @@
 let express=require('express');
 let app=express();
 const joi=require('joi');
-let Sequelize=require('sequelize');
+
 const {student}=require('./models')
-//Establishment of connection to the student database
-const sequelize=new Sequelize('student','root','admin',{
-    host:'127.0.0.1',
-    dialect:'postgres'
-});
+
+
 app.use(express.json());
 
 //API to send student record to the client
