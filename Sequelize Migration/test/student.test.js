@@ -5,7 +5,7 @@ const {student}=require('../models')
 let createdrollno=0;
 
 describe('createStudent',()=>{
-    it('test with valid details',(done)=>{
+    it('test with valid details',async ()=>{
         let req={
             body:{
                 name:'testname',
@@ -22,20 +22,16 @@ describe('createStudent',()=>{
                 this.response=response;
                 createdrollno=this.body.rollno;
                 expect(this.returnedstatus).to.equal(200);
-                done();
             },
             body:{
                 rollno:0
             }
         };
-        
-        createStudent(req,res);
-        
-        
-    })
-    it('check if student created',async()=>{
+        await createStudent(req,res);
         let createdStudentDetails=await student.findOne({where:{rollno:createdrollno}});
         expect(createdStudentDetails).to.not.equal(null);
+        
+        
     })
     it('test with invalid details',(done)=>{
         let req={
@@ -60,11 +56,21 @@ describe('createStudent',()=>{
             }
         };
         createStudent(req,res);
-        console.log(createdrollno)
     })
 })
 describe('update student',()=>{
-    it('update user with valid details',(done)=>{
+    beforeEach(async()=>{
+        detailscreated = await student.create({
+            name:'testname',
+            email:'testemail@mailcom',
+            phone:'575507879'
+        })
+        createdrollno=detailscreated.rollno;
+    })
+    afterEach(()=>{
+        student.destroy({where:{rollno:createdrollno}});
+    })
+    it('update user with valid details',async()=>{
         let req={
             params:{
                 rollno:createdrollno
@@ -81,12 +87,10 @@ describe('update student',()=>{
             send:function(response){
                 this.response=response;
                 expect(this.returnedstatus).to.equal(200);
-                done();
+                
             }
         };
-        updateStudent(req,res);
-    })
-    it('check if details are updated',async()=>{
+        await updateStudent(req,res);
         let updatedDetails=await student.findOne({attributes:['name'],where:{
             rollno:createdrollno
         }})
@@ -117,8 +121,19 @@ describe('update student',()=>{
     })
 })
 describe('get student',()=>{
-    let receivedDetails;
-    it('get student with valid details',(done)=>{
+        beforeEach(async()=>{
+            detailscreated = await student.create({
+                name:'testname',
+                email:'testemail@mailcom',
+                phone:'575507879'
+            })
+            createdrollno=detailscreated.rollno;
+        })
+    afterEach(()=>{
+        student.destroy({where:{rollno:createdrollno}});
+    })
+    it('get student with valid details',async ()=>{
+        let receivedDetails;
         let req={
             params:{
                 rollno:createdrollno
@@ -133,12 +148,9 @@ describe('get student',()=>{
                 this.response=response;
                 receivedDetails=response;
                 expect(this.returnedstatus).to.equal(200);
-                done();
             }
         };
-        getStudent(req,res);
-    })
-    it('check student details received',()=>{
+        await getStudent(req,res);
         expect(receivedDetails).to.not.equal(null);
     })
     it('get student with invalid details',(done)=>{
@@ -162,7 +174,18 @@ describe('get student',()=>{
     })
 })
 describe('delete student',()=>{
-    it('delete student with valid details',(done)=>{
+    beforeEach(async()=>{
+        detailscreated = await student.create({
+            name:'testname',
+            email:'testemail@mailcom',
+            phone:'575507879'
+        })
+        createdrollno=detailscreated.rollno;
+    })
+    afterEach(()=>{
+        student.destroy({where:{rollno:createdrollno}});
+    })
+    it('delete student with valid details',async ()=>{
         let req={
             params:{
                 rollno:createdrollno
@@ -176,16 +199,13 @@ describe('delete student',()=>{
             send:function(response){
                 this.response=response;
                 expect(this.returnedstatus).to.equal(200);
-                done();
             }
         };
-        console.log(req.params.rollno)
-        deleteStudent(req,res);
-    })
-    it('check if the student is deleted in the database',async()=>{
+        await deleteStudent(req,res);
         let deletedDeatils=await student.findOne({where:{rollno:createdrollno}});
         expect(deletedDeatils).to.be.equal(null);
     })
+    
     it('delete student with invalid details',(done)=>{
         let req={
             params:{
